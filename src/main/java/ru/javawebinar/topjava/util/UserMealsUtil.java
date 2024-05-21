@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 public class UserMealsUtil {
     public static void main(String[] args) {
@@ -50,12 +52,10 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExcess> filteredByStreams(List<UserMeal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        Map<LocalDate, Integer> caloriesPerDayMap = new HashMap<>();
+        Map<LocalDate, Long> caloriesPerDayMap =  meals.stream().collect(Collectors.groupingBy(meal -> meal.dateTime().toLocalDate(), Collectors.counting()));
+
         return meals.stream()
-                .peek(m -> caloriesPerDayMap.put(m.dateTime().toLocalDate(),
-                        caloriesPerDayMap.getOrDefault(m.dateTime().toLocalDate(), 0) + m.calories()))
                 .filter(m -> TimeUtil.isBetweenHalfOpen(m.dateTime().toLocalTime(), startTime, endTime))
-                .toList().stream()
                 .map(m -> new UserMealWithExcess(m.dateTime(), m.description(), m.calories(), caloriesPerDayMap.get(m.dateTime().toLocalDate()) > caloriesPerDay))
                 .toList();
     }
