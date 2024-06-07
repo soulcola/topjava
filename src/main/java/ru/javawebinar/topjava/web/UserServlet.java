@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web;
 
 import org.slf4j.Logger;
+import ru.javawebinar.topjava.model.Database;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -14,8 +15,11 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("redirect to users");
+        log.debug(Database.mealsDb.toString());
 
 //        request.getRequestDispatcher("/users.jsp").forward(request, response);
         response.sendRedirect("users.jsp");
     }
+
+
 }

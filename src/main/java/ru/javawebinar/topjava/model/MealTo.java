@@ -1,7 +1,9 @@
 package ru.javawebinar.topjava.model;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
+@Getter
 public class MealTo {
     private final LocalDateTime dateTime;
 
@@ -11,11 +13,14 @@ public class MealTo {
 
     private final boolean excess;
 
-    public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess) {
+    private final Integer id;
+
+    public MealTo(LocalDateTime dateTime, String description, int calories, boolean excess, Integer id) {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
         this.excess = excess;
+        this.id = id;
     }
 
     @Override
