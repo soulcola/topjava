@@ -1,7 +1,9 @@
 package ru.javawebinar.topjava.model;
 
-import java.time.LocalDateTime;
+import lombok.Getter;
 
+import java.time.LocalDateTime;
+@Getter
 public class UserMealWithExcess {
     private final LocalDateTime dateTime;
 
@@ -26,7 +28,7 @@ public class UserMealWithExcess {
                 "dateTime=" + dateTime +
                 ", description='" + description + '\'' +
                 ", calories=" + calories +
-                ", excess=" + day.getExcess() +
+                ", excess=" + day.isExcess() +
                 '}';
     }
 }
