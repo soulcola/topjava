@@ -1,6 +1,8 @@
 package ru.javawebinar.topjava.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,6 +21,7 @@ public class Meal {
         this.dateTime = dateTime;
         this.description = description;
         this.calories = calories;
+        this.id = Database.index;
     }
 
     public LocalDateTime getDateTime() {

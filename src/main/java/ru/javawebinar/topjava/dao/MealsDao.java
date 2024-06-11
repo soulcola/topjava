@@ -4,21 +4,23 @@ import ru.javawebinar.topjava.model.Database;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 public class MealsDao implements Dao<Integer, Meal>{
-//    private static final List<Meal> mealsDb = Database.mealsDb;
+    private static final Map<Integer, Meal> mealsDb = Database.getMealsDb();
     @Override
     public boolean create(Meal entity) {
-        entity.setId(Database.index);
-        Database.index++;
-        Database.mealsDb.add(entity);
+        mealsDb.put(Database.index, entity);
         return true;
     }
 
     @Override
     public Optional<Meal> findById(Integer id) {
-        return null;
+        return mealsDb.entrySet().stream()
+                .filter(integerMealEntry -> integerMealEntry.getKey().equals(id))
+                .findFirst()
+                .map(Map.Entry::getValue);
     }
 
     @Override
@@ -27,12 +29,12 @@ public class MealsDao implements Dao<Integer, Meal>{
     }
 
     @Override
-    public boolean delete(Meal entity) {
-        return false;
+    public boolean delete(Integer id) {
+        return mealsDb.remove(id) != null;
     }
 
     @Override
     public List<Meal> findAll() {
-        return Database.mealsDb;
+        return mealsDb.values().stream().toList();
     }
 }

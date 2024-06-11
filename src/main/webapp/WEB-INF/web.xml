@@ -17,22 +17,26 @@
     </servlet-mapping>
 
     <servlet>
-        <servlet-name>mealsServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealsServlet</servlet-class>
+        <servlet-name>mealsController</servlet-name>
+        <servlet-class>ru.javawebinar.topjava.web.MealsController</servlet-class>
         <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
-        <servlet-name>mealsServlet</servlet-name>
+        <servlet-name>mealsController</servlet-name>
         <url-pattern>/meals</url-pattern>
     </servlet-mapping>
 
-    <servlet>
-        <servlet-name>mealCreateServlet</servlet-name>
-        <servlet-class>ru.javawebinar.topjava.web.MealCreateServlet</servlet-class>
-        <load-on-startup>0</load-on-startup>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>mealCreateServlet</servlet-name>
-        <url-pattern>/meals/create</url-pattern>
-    </servlet-mapping>
+    <filter>
+        <filter-name>FilterName</filter-name>
+        <filter-class>ru.javawebinar.topjava.web.ServletFilter</filter-class>
+        <init-param>
+            <param-name>active</param-name>
+            <param-value>false</param-value>
+        </init-param>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>FilterName</filter-name>
+        <servlet-name>mealsController</servlet-name>
+    </filter-mapping>
 </web-app>

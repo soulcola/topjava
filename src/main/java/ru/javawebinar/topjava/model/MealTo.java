@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.model;
 
 import lombok.Getter;
+import ru.javawebinar.topjava.util.DateTimeFormat;
 
 import java.time.LocalDateTime;
 @Getter
@@ -23,6 +24,9 @@ public class MealTo {
         this.id = id;
     }
 
+    public String getFormattedDateTime(){
+        return new DateTimeFormat().format(dateTime);
+    }
     @Override
     public String toString() {
         return "MealTo{" +
