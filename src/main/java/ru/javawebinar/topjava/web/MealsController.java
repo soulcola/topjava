@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.web;
 
+import lombok.extern.slf4j.Slf4j;
 import ru.javawebinar.topjava.dao.Dao;
 import ru.javawebinar.topjava.dao.MealsInMemoryDao;
 import ru.javawebinar.topjava.mapper.MealCreateMapper;
@@ -15,7 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
-
+@Slf4j
 public class MealsController extends HttpServlet {
     Dao<Integer, Meal> mealsDao = MealsInMemoryDao.getInstance();
     MealCreateMapper mealCreateMapper = MealCreateMapper.getInstance();
@@ -24,8 +25,10 @@ public class MealsController extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         var action = req.getParameter("action");
+        log.debug("method {} invoked", action);
         if (action == null || action.equals("list")) {
             List<Meal> meals = mealsDao.findAll();
+            log.debug("database: {}", meals);
             List<MealTo> mealToList = MealsUtil.filteredByStreams(meals, null, null, 2000);
             req.setAttribute("meals", mealToList);
             req.setAttribute("formatter", formatter);
@@ -33,12 +36,14 @@ public class MealsController extends HttpServlet {
         } else if (action.equals("update")) {
             var id = req.getParameter("id");
             var maybeMeal = mealsDao.findById(Integer.parseInt(id));
+            log.debug("entity = {}, id = {}", maybeMeal, id);
             maybeMeal.ifPresent(meal -> req.setAttribute("meal", meal));
             req.setAttribute("formatter", formatter);
             getServletContext().getRequestDispatcher("/meal.jsp").forward(req, resp);
         } else if (action.equals(("delete"))) {
             var id = req.getParameter("id");
             mealsDao.delete(Integer.parseInt(id));
+            log.debug("entity id = {} deleted", id);
             resp.sendRedirect(req.getContextPath() + "/meals");
         } else if (action.equals("create")) {
             getServletContext().getRequestDispatcher("/meal.jsp").forward(req, resp);
@@ -56,8 +61,10 @@ public class MealsController extends HttpServlet {
         Meal entity = mealCreateMapper.map(dto);
         if (id == null || id.isEmpty()) {
             mealsDao.create(entity);
+            log.debug("entity created: {}", entity);
         } else {
             mealsDao.update(Integer.parseInt(id), entity);
+            log.debug("entity with id {} updated: {}", id, entity);
         }
         resp.sendRedirect("./meals?action=list");
     }
