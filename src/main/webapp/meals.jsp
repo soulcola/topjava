@@ -1,4 +1,5 @@
-<%--
+<%@ page import="ru.javawebinar.topjava.util.TimeUtil" %>
+<%@ page import="ru.javawebinar.topjava.model.MealTo" %><%--
   Created by IntelliJ IDEA.
   User: admin
   Date: 07.06.2024
@@ -28,6 +29,8 @@
         tr:nth-child(even) {
             background-color: #dddddd;
         }
+        .normal {color:green}
+        .exceeded {color:red}
     </style>
 </head>
 <body>
@@ -42,12 +45,17 @@
         <th>Description</th>
         <th>Calories</th>
     </tr>
+
     <c:forEach var="meal" items="${requestScope.meals}">
-        <c:if test="${meal.excess}">
-            <tr style="color:red">
-        </c:if>
+        <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.MealTo"/>
+
+        <tr class="${meal.excess ? 'exceeded' : 'normal'}">
         <td>${meal.id}</td>
-        <td>${requestScope.formatter.format(meal.dateTime)}</td>
+        <td>
+<%--                <%=TimeUtil.format(meal.getDateTime())%>--%>
+            <fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDate"/>
+            <fmt:formatDate value="${parsedDate}" pattern="yyyy.MM.dd HH:mm"/>
+        </td>
         <td>${meal.description}</td>
         <td>${meal.calories}</td>
         <td><a href="${pageContext.request.contextPath}/meals?action=update&id=${meal.id}">update</a></td>

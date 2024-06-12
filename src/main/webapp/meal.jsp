@@ -16,20 +16,21 @@
 <h3><a href="./" target="_blank">Home</a></h3>
 <hr>
 <form action="./meals" method="post">
-    Meal ID : <input type="text" readonly="readonly" name="id"
-                     value="<c:out value="${requestScope.meal.id}" />"/> <br/><br/>
+    Meal ID : <label>
+    <input type="text" readonly="readonly" name="id"
+           value="<c:out value="${requestScope.meal.id}" />"/>
+</label> <br/><br/>
 
-    DateTime: <input type="datetime-local" id="date" name="date"
-    <c:if test="${requestScope.meal != null}">
-                         value="${requestScope.meal.dateTime}"
-    </c:if>>
+    DateTime: <label for="date"></label><input type="datetime-local" id="date" name="date"
+<c:if test="${requestScope.meal != null}"> value="${requestScope.meal.dateTime}" </c:if>>
     <br><br>
 
-    Description: <input type="text" id="desc" name="desc" <c:if test="${requestScope.meal != null}">
-                        value="${requestScope.meal.description}" </c:if>><br><br>
+    Description: <label for="desc"></label><input type="text" id="desc" name="desc"
+<c:if test="${requestScope.meal != null}"> value="${requestScope.meal.description}"</c:if>>
+    <br><br>
 
-    Calories: <input type="number" id="cal" name="cal" <c:if test="${requestScope.meal != null}">
-                    value="${requestScope.meal.calories}" </c:if>><br><br>
+    Calories: <label for="cal"></label><input type="number" id="cal" name="cal"
+<c:if test="${requestScope.meal != null}"> value="${requestScope.meal.calories}" </c:if>><br><br>
 
     <input type="submit"
            value='<c:out value="${not empty requestScope.meal ? 'Update' : 'Create'}"/>'

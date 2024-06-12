@@ -4,6 +4,7 @@ import lombok.Value;
 
 @Value
 public class MealCreateUpdateDto {
+    String id;
     String dateTime;
     String description;
     String calories;

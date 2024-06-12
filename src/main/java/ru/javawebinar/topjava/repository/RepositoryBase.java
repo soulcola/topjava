@@ -1,14 +1,12 @@
-package ru.javawebinar.topjava.dao;
+package ru.javawebinar.topjava.repository;
 
 import java.util.List;
 import java.util.Optional;
 
-public interface Dao<K, T> {
+public interface RepositoryBase<K, T> {
     T create(T entity);
 
     Optional<T> findById(K id);
-
-    void update(K id, T entity);
 
     void delete(K id);
 
