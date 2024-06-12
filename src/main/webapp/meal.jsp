@@ -9,26 +9,32 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
+    <meta charset="UTF-8">
     <title>Title</title>
 </head>
 <body>
+<h3><a href="./" target="_blank">Home</a></h3>
+<hr>
 <form action="./meals" method="post">
     Meal ID : <input type="text" readonly="readonly" name="id"
-                     value="<c:out value="${meal.id}" />"/> <br/>
+                     value="<c:out value="${meal.id}" />"/> <br/><br/>
 
-    <label for="date">DateTime:</label><br>
-    <input type="datetime-local" id="date" name="date" <c:if test="${requestScope.meal != null}">
-           value="${requestScope.meal.dateTime}}" </c:if>> <br><br>
+    DateTime: <input type="datetime-local" id="date" name="date"
+    <c:if test="${requestScope.meal != null}">
+                         value="${requestScope.meal.dateTime}"
+    </c:if>>
+    <br><br>
 
-    <label for="desc">Description:</label><br>
-    <input type="text" id="desc" name="desc" <c:if test="${requestScope.meal != null}">
-           value="${requestScope.meal.description}" </c:if>><br><br>
+    Description: <input type="text" id="desc" name="desc" <c:if test="${requestScope.meal != null}">
+                        value="${requestScope.meal.description}" </c:if>><br><br>
 
-    <label for="cal">Calories:</label><br>
-    <input type="number" id="cal" name="cal" <c:if test="${requestScope.meal != null}">
-           value="${requestScope.meal.calories}" </c:if>><br><br>
+    Calories: <input type="number" id="cal" name="cal" <c:if test="${requestScope.meal != null}">
+                    value="${requestScope.meal.calories}" </c:if>><br><br>
 
-    <input type="submit" value='<c:out value="${not empty requestScope.meal ? 'Update' : 'Create'}"/>'/>
+    <input type="submit"
+           value='<c:out value="${not empty requestScope.meal ? 'Update' : 'Create'}"/>'
+    />
+    <button onclick="window.history.back()" type="button">Cancel</button>
 </form>
 
 </body>

@@ -1,14 +1,21 @@
 package ru.javawebinar.topjava.util;
 
-import java.time.LocalDate;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
-
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class DateTimeFormat {
-    private final String pattern = "yyyy-MM-dd HH:mm";
+    private static final DateTimeFormat INSTANCE = new DateTimeFormat();
+
+    public static DateTimeFormat getInstance() {
+        return INSTANCE;
+    }
+    private static final String PATTERN = "yyyy-MM-dd HH:mm";
     public String format(LocalDateTime from) {
-        var dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        var dateTimeFormatter = DateTimeFormatter.ofPattern(PATTERN);
         return dateTimeFormatter.format(from);
     }
 }

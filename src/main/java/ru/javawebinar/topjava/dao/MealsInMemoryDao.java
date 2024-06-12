@@ -1,18 +1,24 @@
 package ru.javawebinar.topjava.dao;
 
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import ru.javawebinar.topjava.model.Database;
 import ru.javawebinar.topjava.model.Meal;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-public class MealsDao implements Dao<Integer, Meal>{
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public class MealsInMemoryDao implements Dao<Integer, Meal> {
     private static final Map<Integer, Meal> mealsDb = Database.getMealsDb();
+    private static final MealsInMemoryDao INSTANCE = new MealsInMemoryDao();
+
+    public static MealsInMemoryDao getInstance() {
+        return INSTANCE;
+    }
     @Override
-    public boolean create(Meal entity) {
-        mealsDb.put(Database.index, entity);
-        return true;
+    public Meal create(Meal entity) {
+        return mealsDb.put(Database.index.get(), entity);
     }
 
     @Override
@@ -24,13 +30,14 @@ public class MealsDao implements Dao<Integer, Meal>{
     }
 
     @Override
-    public void update(Meal entity) {
-
+    public void update(Integer id, Meal entity) {
+        entity.setId(id);
+        mealsDb.replace(id, entity);
     }
 
     @Override
-    public boolean delete(Integer id) {
-        return mealsDb.remove(id) != null;
+    public void delete(Integer id) {
+        mealsDb.remove(id);
     }
 
     @Override
