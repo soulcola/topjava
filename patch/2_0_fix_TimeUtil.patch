@@ -1,0 +1,18 @@
+Subject: [PATCH] 2_0_fix_TimeUtil
+---
+Index: src/main/java/ru/javawebinar/topjava/util/TimeUtil.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/src/main/java/ru/javawebinar/topjava/util/TimeUtil.java b/src/main/java/ru/javawebinar/topjava/util/TimeUtil.java
+--- a/src/main/java/ru/javawebinar/topjava/util/TimeUtil.java	(revision 68e7383caa4f4aa7b29d61598049db810d734b6f)
++++ b/src/main/java/ru/javawebinar/topjava/util/TimeUtil.java	(date 1718280391129)
+@@ -4,6 +4,6 @@
+ 
+ public class TimeUtil {
+     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
+-        return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
++        return !lt.isBefore(startTime) && lt.isBefore(endTime);
+     }
+ }
