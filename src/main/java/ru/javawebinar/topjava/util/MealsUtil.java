@@ -5,9 +5,9 @@ import ru.javawebinar.topjava.model.MealTo;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class MealsUtil {
@@ -24,7 +24,7 @@ public class MealsUtil {
             new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410)
     );
 
-    public static List<MealTo> filteredByStreams(List<Meal> meals, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<MealTo> filteredByPredicate(List<Meal> meals, Predicate<Meal> filter) {
 
         Map<LocalDate, Integer> caloriesSumByDate = meals.stream()
                 .collect(
@@ -33,13 +33,13 @@ public class MealsUtil {
                 );
 
         return meals.stream()
-                .filter(meal -> TimeUtil.isBetweenHalfOpen(meal.getTime(), startTime, endTime))
-                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > caloriesPerDay))
+                .filter(filter)
+                .map(meal -> createTo(meal, caloriesSumByDate.get(meal.getDate()) > DEFAULT_CALORIES_PER_DAY))
                 .collect(Collectors.toList());
     }
 
-    public static List<MealTo> filteredByStreamsWoTime(List<Meal> meals, int caloriesPerDay){
-        return filteredByStreams(meals, LocalTime.MIN, LocalTime.MAX, caloriesPerDay);
+    public static List<MealTo> filteredByStreamsWoTime(List<Meal> meals){
+        return filteredByPredicate(meals, meal -> true);
     }
 
     private static MealTo createTo(Meal meal, boolean excess) {

@@ -34,12 +34,11 @@ public class MealsController extends HttpServlet {
         if (action == null || action.equals(FIND_ALL_ACTION)) {
             List<Meal> meals = mealsRepositoryBase.findAll();
             log.debug("database: {}", meals);
-            req.setAttribute("meals", MealsUtil.filteredByStreamsWoTime(meals, 2000));
+            req.setAttribute("meals", MealsUtil.filteredByStreamsWoTime(meals));
             getServletContext().getRequestDispatcher(FIND_ALL_JSP).forward(req, resp);
         } else if (action.equals(UPDATE_ACTION)) {
 
             var id = req.getParameter("id");
-            var nonNull = Objects.requireNonNull(id);
             var maybeMeal = mealsRepositoryBase.findById(Integer.parseInt(id));
             log.debug("entity = {}, id = {}", maybeMeal, id);
             maybeMeal.ifPresent(meal -> req.setAttribute("meal", meal));
