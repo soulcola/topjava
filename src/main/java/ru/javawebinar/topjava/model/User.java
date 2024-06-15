@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.model;
 import org.springframework.util.CollectionUtils;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
@@ -19,7 +20,15 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     private int caloriesPerDay;
-    private final List<Meal> userMeals = new ArrayList<>();
+    private final Map<Integer, Meal> userMeals = new ConcurrentHashMap<>();
+
+    public Map<Integer, Meal> getUserMeals() {
+        return userMeals;
+    }
+
+    public void setUserMeal (Meal meal){
+        userMeals.put(meal.getId(), meal);
+    }
 
     public User(Integer id, String name, String email, String password, Role... roles) {
         this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, Arrays.asList(roles));
@@ -33,9 +42,7 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
         setRoles(roles);
     }
-    public void setMeal(Meal meal){
-        userMeals.add(meal);
-    }
+
     public String getEmail() {
         return email;
     }
