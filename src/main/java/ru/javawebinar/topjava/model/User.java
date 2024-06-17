@@ -20,16 +20,6 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     private int caloriesPerDay;
-    private final Map<Integer, Meal> userMeals = new ConcurrentHashMap<>();
-
-    public Map<Integer, Meal> getUserMeals() {
-        return userMeals;
-    }
-
-    public void setUserMeal (Meal meal){
-        userMeals.put(meal.getId(), meal);
-    }
-
     public User(Integer id, String name, String email, String password, Role... roles) {
         this(id, name, email, password, DEFAULT_CALORIES_PER_DAY, true, Arrays.asList(roles));
     }
@@ -94,12 +84,12 @@ public class User extends AbstractNamedEntity {
     @Override
     public String toString() {
         return "User{" +
-                "id=" + id +
-                ", email=" + email +
-                ", name=" + name +
-                ", enabled=" + enabled +
-                ", roles=" + roles +
-                ", caloriesPerDay=" + caloriesPerDay +
-                '}';
+               "id=" + id +
+               ", email=" + email +
+               ", name=" + name +
+               ", enabled=" + enabled +
+               ", roles=" + roles +
+               ", caloriesPerDay=" + caloriesPerDay +
+               '}';
     }
 }

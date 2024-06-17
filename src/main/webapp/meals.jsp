@@ -32,11 +32,18 @@
                 <th>До времени (исключая)</th>
             </tr>
             <tr>
-                <c:set var="filter" value="${requestScope.filter}"/>
-                <td><input type="date" value="${filter.startDate()}" name="startDate"></td>
-                <td><input type="date" value="${filter.endDate()}" name="endDate"></td>
-                <td><input type="time" value="${filter.startTime()}" name="startTime"></td>
-                <td><input type="time" value="${filter.endTime()}" name="endTime"></td>
+                <td><label>
+                    <input type="date" value="${param.startDate}" name="startDate">
+                </label></td>
+                <td><label>
+                    <input type="date" value="${param.endDate}" name="endDate">
+                </label></td>
+                <td><label>
+                    <input type="time" value="${param.startTime}" name="startTime">
+                </label></td>
+                <td><label>
+                    <input type="time" value="${param.endTime}" name="endTime">
+                </label></td>
             </tr>
         </table>
         <button type="submit">Отфильтровать</button>

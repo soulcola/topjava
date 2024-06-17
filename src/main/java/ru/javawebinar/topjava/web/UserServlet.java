@@ -16,13 +16,12 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         log.debug("forward to users");
-        request.setAttribute("userId", SecurityUtil.authUserId());
         request.getRequestDispatcher("/users.jsp").forward(request, response);
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        var userId = req.getParameter("userId");
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        String userId = req.getParameter("userId");
         SecurityUtil.setAuthUserId(Integer.parseInt(userId));
         resp.sendRedirect(getServletContext().getContextPath() + "/meals");
     }

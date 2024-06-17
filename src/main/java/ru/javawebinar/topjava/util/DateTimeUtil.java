@@ -1,28 +1,38 @@
 package ru.javawebinar.topjava.util;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.chrono.ChronoLocalDate;
-import java.time.chrono.ChronoLocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.Temporal;
-import java.time.temporal.TemporalAccessor;
+import java.time.format.DateTimeParseException;
 
 public class DateTimeUtil {
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+    private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return !lt.isBefore(startTime) && lt.isBefore(endTime);
-    }
-
-    public static <T extends Comparable<T>> boolean isBetweenHalfOpen2(T lt, T startTime, T endTime) {
-        return lt.compareTo(startTime) >= 0 && lt.compareTo(endTime) < 0;
+    public static <T extends Comparable<T>> boolean isBetweenHalfOpen(T lt, T start, T end) {
+        return lt.compareTo(start) >= 0 && lt.compareTo(end) < 0;
     }
 
     public static String toString(LocalDateTime ldt) {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
+    }
+
+    public static LocalDateTime formatDate(String dateTime) {
+        try {
+            return LocalDate.parse(dateTime, DATE_FORMATTER).atStartOfDay();
+        } catch (DateTimeParseException | NullPointerException e) {
+            return null;
+        }
+    }
+
+    public static LocalTime formatTime(String time) {
+        try {
+            return LocalTime.parse(time, TIME_FORMATTER);
+        } catch (DateTimeParseException | NullPointerException e) {
+            return null;
+        }
     }
 }
 
