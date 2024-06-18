@@ -33,7 +33,9 @@ public class InMemoryMealRepository implements MealRepository {
             return meal;
         }
         // handle case: update, but not present in storage
-        return repository.get(userId).computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
+        return Optional.ofNullable(repository.get(userId))
+                .orElseGet(HashMap::new)
+                .computeIfPresent(meal.getId(), (id, oldMeal) -> meal);
     }
 
     @Override
@@ -49,7 +51,7 @@ public class InMemoryMealRepository implements MealRepository {
     public Meal get(int id, int userId) {
         return Optional.ofNullable(repository.get(userId))
                 .orElseGet(Collections::emptyMap)
-                .getOrDefault(id, null);
+                .get(id);
     }
 
     @Override
