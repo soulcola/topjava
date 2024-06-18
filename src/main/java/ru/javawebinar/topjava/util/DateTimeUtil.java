@@ -19,18 +19,25 @@ public class DateTimeUtil {
         return ldt == null ? "" : ldt.format(DATE_TIME_FORMATTER);
     }
 
-    public static LocalDateTime formatDate(String dateTime) {
+    public static LocalDate formatDate(String dateTime) {
+        if (dateTime == null) {
+            return null;
+        }
         try {
-            return LocalDate.parse(dateTime, DATE_FORMATTER).atStartOfDay();
-        } catch (DateTimeParseException | NullPointerException e) {
+            return LocalDate.parse(dateTime, DATE_FORMATTER);
+        } catch (DateTimeParseException e) {
             return null;
         }
     }
 
     public static LocalTime formatTime(String time) {
+        if (time == null) {
+            return null;
+        }
+
         try {
             return LocalTime.parse(time, TIME_FORMATTER);
-        } catch (DateTimeParseException | NullPointerException e) {
+        } catch (DateTimeParseException e) {
             return null;
         }
     }

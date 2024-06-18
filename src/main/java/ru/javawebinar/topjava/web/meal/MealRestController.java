@@ -9,10 +9,13 @@ import ru.javawebinar.topjava.service.MealService;
 import ru.javawebinar.topjava.to.MealTo;
 import ru.javawebinar.topjava.web.SecurityUtil;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
+import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
+import static ru.javawebinar.topjava.util.MealsUtil.getFilteredTos;
 import static ru.javawebinar.topjava.util.ValidationUtil.assureIdConsistent;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNew;
 
@@ -30,11 +33,18 @@ public class MealRestController {
         return service.getAll(userId);
     }
 
-    public List<MealTo> getAllByFilter(LocalDateTime startDate, LocalDateTime endDate,
-                                       LocalTime startTime, LocalTime endTime) {
+    public List<MealTo> getAllByFilter(LocalDate maybeStartDate, LocalDate maybeEndDate,
+                                       LocalTime maybeStartTime, LocalTime maybeEndTime) {
         log.info("getAllByFilter");
         log.info("userId: {}", SecurityUtil.authUserId());
-        return service.getAllByFilter(SecurityUtil.authUserId(), startDate, endDate, startTime, endTime);
+
+        LocalDate startDate = Optional.ofNullable(maybeStartDate).orElse(LocalDate.MIN);
+        LocalDate endDate = Optional.ofNullable(maybeEndDate).orElse(LocalDate.MAX);
+        LocalTime startTime = Optional.ofNullable(maybeStartTime).orElse(LocalTime.MIN);
+        LocalTime endTime = Optional.ofNullable(maybeEndTime).orElse(LocalTime.MAX);
+
+        List<Meal> filteredMeals = service.getAllByFilter(SecurityUtil.authUserId(), startDate, endDate);
+        return getFilteredTos(filteredMeals, DEFAULT_CALORIES_PER_DAY, startTime, endTime);
     }
 
     public Meal get(int id) {

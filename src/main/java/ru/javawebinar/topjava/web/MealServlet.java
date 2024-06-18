@@ -14,6 +14,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
@@ -75,12 +76,12 @@ public class MealServlet extends HttpServlet {
                 break;
             case "all":
             default:
-                LocalDateTime startDate = DateTimeUtil.formatDate(request.getParameter("startDate"));
-                LocalDateTime endDate = DateTimeUtil.formatDate(request.getParameter("endDate"));
                 LocalTime startTime = DateTimeUtil.formatTime(request.getParameter("startTime"));
                 LocalTime endTime = DateTimeUtil.formatTime(request.getParameter("endTime"));
+                LocalDate startDate = DateTimeUtil.formatDate(request.getParameter("startDate"));
+                LocalDate endDate = DateTimeUtil.formatDate(request.getParameter("endDate"));
                 List<MealTo> meals;
-                if ((startDate == null && endDate == null && startTime == null && endTime == null)) {
+                if (startDate == null && endDate == null && startTime == null && endTime == null) {
                     log.info("getAll");
                     log.debug("userId: {}", SecurityUtil.authUserId());
                     meals = mealRestController.getAll();
