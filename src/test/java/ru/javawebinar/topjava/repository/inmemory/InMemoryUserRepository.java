@@ -1,9 +1,13 @@
 package ru.javawebinar.topjava.repository.inmemory;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.UserRepository;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -11,8 +15,9 @@ import java.util.stream.Collectors;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 
-@Repository
+@Repository("inMemory")
 public class InMemoryUserRepository extends InMemoryBaseRepository<User> implements UserRepository {
+    private static final Logger log = LoggerFactory.getLogger(InMemoryMealRepository.class);
 
     public void init() {
         map.clear();
@@ -20,6 +25,16 @@ public class InMemoryUserRepository extends InMemoryBaseRepository<User> impleme
         put(admin);
         put(guest);
         counter.getAndSet(GUEST_ID + 1);
+    }
+
+    @PostConstruct
+    public void postConstruct() {
+        log.info("+++ PostConstruct");
+    }
+
+    @PreDestroy
+    public void preDestroy() {
+        log.info("+++ PreDestroy");
     }
 
     @Override
