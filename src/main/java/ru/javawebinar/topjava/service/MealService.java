@@ -5,9 +5,10 @@ import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
+import static ru.javawebinar.topjava.util.DateTimeUtil.getNextDayOrMaxDate;
+import static ru.javawebinar.topjava.util.DateTimeUtil.getOrMinDate;
 import static ru.javawebinar.topjava.util.ValidationUtil.checkNotFoundWithId;
 
 @Service
@@ -37,7 +38,7 @@ public class MealService {
     }
 
     public List<Meal> getAllByFilter(Integer userId, LocalDate startDate, LocalDate endDate) {
-        return repository.getAllByFilter(userId, startDate.atStartOfDay(), endDate.atTime(LocalTime.MAX));
+        return repository.getAllByFilter(userId, getOrMinDate(startDate), getNextDayOrMaxDate(endDate));
     }
 
     public void update(Meal meal, Integer userId) {

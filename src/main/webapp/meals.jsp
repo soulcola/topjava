@@ -23,7 +23,10 @@
     <h2>Meals</h2>
     <a href="meals?action=create">Add Meal</a>
     <br><br>
-    <form method="get" action="meals">
+    <form method="get" action="meals?action=filter">
+        <label>
+            <input hidden="hidden" type="text" value="filter" name="action">
+        </label>
         <table>
             <tr>
                 <th>От даты (включая)</th>
