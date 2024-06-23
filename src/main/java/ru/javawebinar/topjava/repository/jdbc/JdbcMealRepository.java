@@ -1,5 +1,6 @@
 package ru.javawebinar.topjava.repository.jdbc;
 
+import org.springframework.context.annotation.Profile;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -14,6 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository()
+@Profile("!test")
 public class JdbcMealRepository implements MealRepository {
     private static final BeanPropertyRowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
     private final JdbcTemplate jdbcTemplate;
@@ -31,7 +33,7 @@ public class JdbcMealRepository implements MealRepository {
     private static final String GET_BETWEEN_HALF_OPEN_SQL = "SELECT id, user_id, date_time, description, calories " +
                                                             "FROM meals " +
                                                             "WHERE user_id=:userId AND user_id=:userId " +
-                                                            "AND date_time BETWEEN :startDate AND :endDate " +
+                                                            "AND date_time BETWEEN :startDate AND :endDate AND date_time != :endDate " +
                                                             "ORDER BY date_time DESC";
     private static final String UPDATE_MEAL_SQL = "UPDATE meals SET " +
                                                   "date_time=:dateTime, " +
