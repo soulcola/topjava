@@ -52,13 +52,13 @@ public class MealServiceTest {
     @Test
     public void getBetweenInclusive() {
         List<Meal> actual = service.getBetweenInclusive(userMeal1.getDate(), userMeal3.getDate(), USER_ID);
-        assertMatch(actual, Arrays.asList(userMeal1, userMeal2, userMeal3, userMeal4));
+        assertMatch(actual, Arrays.asList(userMeal4, userMeal3, userMeal2, userMeal1));
     }
 
     @Test
     public void getAll() {
         List<Meal> actual = service.getAll(USER_ID);
-        assertMatch(actual, Arrays.asList(userMeal1, userMeal2, userMeal3, userMeal4, userMeal5));
+        assertMatch(actual, Arrays.asList(userMeal5, userMeal4, userMeal3, userMeal2, userMeal1));
     }
 
     @Test
@@ -72,7 +72,7 @@ public class MealServiceTest {
     @Test
     public void updateNotYour() {
         assertThrows(NotFoundException.class,
-                () -> service.update(updatedMeal, ADMIN_ID));
+                () -> service.update(getUpdated(), ADMIN_ID));
     }
 
 
