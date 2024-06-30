@@ -1,19 +1,29 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.Ignore;
+import org.junit.AfterClass;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
+import ru.javawebinar.topjava.MethodExecutionTimeLogger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.*;
@@ -26,8 +36,26 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@Ignore
 public class MealServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(MethodExecutionTimeLogger.class);
+    private static final Map<Description, Long> methodsTimes = new HashMap<>();
+
+    private static void logInfo(Description description, long nanos) {
+        String testName = description.getMethodName();
+        log.info("Test {}, spent {} milliseconds", testName, TimeUnit.NANOSECONDS.toMillis(nanos));
+    }
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+        @Override
+        protected void finished(long nanos, Description description) {
+            methodsTimes.put(description, nanos);
+            logInfo(description, nanos);
+        }
+    };
+
+//    @Rule
+//    public MethodExecutionTimeLogger methodExecutionTimeLogger = new MethodExecutionTimeLogger();
 
     @Autowired
     private MealService service;
@@ -95,7 +123,8 @@ public class MealServiceTest {
 
     @Test
     public void getAll() {
-        MEAL_MATCHER.assertMatch(service.getAll(USER_ID), meals);
+        List<Meal> actual = service.getAll(USER_ID);
+        MEAL_MATCHER.assertMatch(actual, meals);
     }
 
     @Test
@@ -109,5 +138,10 @@ public class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
+    }
+
+    @AfterClass
+    public static void afterClass() {
+        methodsTimes.forEach(MealServiceTest::logInfo);
     }
 }
