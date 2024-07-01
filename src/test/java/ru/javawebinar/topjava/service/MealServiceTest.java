@@ -14,15 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
-import ru.javawebinar.topjava.MethodExecutionTimeLogger;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import static org.junit.Assert.assertThrows;
@@ -37,28 +34,27 @@ import static ru.javawebinar.topjava.UserTestData.USER_ID;
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
 public class MealServiceTest {
-    private static final Logger log = LoggerFactory.getLogger(MethodExecutionTimeLogger.class);
-    private static final Map<Description, Long> methodsTimes = new HashMap<>();
+    private static final Logger log = LoggerFactory.getLogger(MealServiceTest.class);
 
-    private static void logInfo(Description description, long nanos) {
-        String testName = description.getMethodName();
-        log.info("Test {}, spent {} milliseconds", testName, TimeUnit.NANOSECONDS.toMillis(nanos));
-    }
+    private static final StringBuilder methodsTimes = new StringBuilder();
+
+    @Autowired
+    private MealService service;
 
     @Rule
     public Stopwatch stopwatch = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
-            methodsTimes.put(description, nanos);
-            logInfo(description, nanos);
+            String testName = description.getMethodName();
+            String message = String.format("%-30s %d ms", testName, TimeUnit.NANOSECONDS.toMillis(nanos));
+            methodsTimes.append(message).append('\n');
+            log.info(message);
         }
     };
-
-//    @Rule
-//    public MethodExecutionTimeLogger methodExecutionTimeLogger = new MethodExecutionTimeLogger();
-
-    @Autowired
-    private MealService service;
+    @AfterClass
+    public static void afterClass() {
+        log.info("Summary: \n{}", methodsTimes);
+    }
 
     @Test
     public void delete() {
@@ -138,10 +134,5 @@ public class MealServiceTest {
     @Test
     public void getBetweenWithNullDates() {
         MEAL_MATCHER.assertMatch(service.getBetweenInclusive(null, null, USER_ID), meals);
-    }
-
-    @AfterClass
-    public static void afterClass() {
-        methodsTimes.forEach(MealServiceTest::logInfo);
     }
 }

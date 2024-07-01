@@ -8,7 +8,6 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -23,41 +22,31 @@ public class JpaMealRepository implements MealRepository {
     @Transactional
     public Meal save(Meal meal, int userId) {
         User userRef = em.getReference(User.class, userId);
+        meal.setUser(userRef);
         if (meal.isNew()) {
-            meal.setUser(userRef);
             em.persist(meal);
             return meal;
-        } else {
-            Query query = em.createQuery("UPDATE Meal m " +
-                                         "   SET description=:description, calories=:calories, dateTime=:date_time " +
-                                         " WHERE id=:id AND user=:user");
-            return query.setParameter("id", meal.getId())
-                           .setParameter("description", meal.getDescription())
-                           .setParameter("calories", meal.getCalories())
-                           .setParameter("date_time", meal.getDateTime())
-                           .setParameter("user", userRef)
-                           .executeUpdate() != 0 ? meal : null;
+        } else if (get(meal.getId(), userId) != null) {
+            return em.merge(meal);
         }
+        return null;
     }
 
     @Override
     @Transactional
     public boolean delete(int id, int userId) {
-        Optional<Meal> meal = Optional.ofNullable(em.find(Meal.class, id));
-        if (meal.isPresent() && meal.get().getUser().getId() == userId) {
-            em.remove(meal.get());
-            return true;
-        }
-        return false;
+        return em.createNamedQuery(Meal.DELETE)
+                .setParameter("userId", userId)
+                .setParameter("id", id)
+                .executeUpdate() != 0;
+
     }
 
     @Override
     public Meal get(int id, int userId) {
-        Optional<Meal> meal = Optional.ofNullable(em.find(Meal.class, id));
-        if (meal.isPresent() && meal.get().getUser().getId() == userId) {
-            return meal.get();
-        }
-        return null;
+        return Optional.ofNullable(em.find(Meal.class, id))
+                .filter(meal -> meal.getUser().getId() == userId)
+                .orElse(null);
     }
 
     @Override
