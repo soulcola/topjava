@@ -10,12 +10,12 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.DELETE, query = "DELETE FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
         @NamedQuery(name = Meal.ALL_SORTED, query = "SELECT m FROM Meal m WHERE m.user.id=:userId ORDER BY m.dateTime DESC"),
         @NamedQuery(name = Meal.GET_BETWEEN_HALF_OPEN, query = "SELECT m FROM Meal m WHERE m.user.id=:userId " +
-                                                               "AND m.dateTime >= :start AND m.dateTime < :end " +
-                                                               "ORDER BY m.dateTime DESC "),
+                "AND m.dateTime >= :start AND m.dateTime < :end " +
+                "ORDER BY m.dateTime DESC "),
         @NamedQuery(name = Meal.GET, query = "SELECT m FROM Meal m WHERE m.id=:id AND m.user.id=:userId"),
 })
 @Entity
-@Table(name = "meal", uniqueConstraints = { @UniqueConstraint(columnNames = { "user_id", "date_time" }) })
+@Table(name = "meal", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"})})
 public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "Meal.delete";
     public static final String ALL_SORTED = "Meal.getAllSorted";
@@ -75,6 +75,10 @@ public class Meal extends AbstractBaseEntity {
         return dateTime.toLocalTime();
     }
 
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
     public void setDescription(String description) {
         this.description = description;
     }
@@ -94,10 +98,10 @@ public class Meal extends AbstractBaseEntity {
     @Override
     public String toString() {
         return "Meal{" +
-               "id=" + id +
-               ", dateTime=" + dateTime +
-               ", description='" + description + '\'' +
-               ", calories=" + calories +
-               '}';
+                "id=" + id +
+                ", dateTime=" + dateTime +
+                ", description='" + description + '\'' +
+                ", calories=" + calories +
+                '}';
     }
 }

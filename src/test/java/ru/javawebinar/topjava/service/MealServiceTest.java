@@ -51,6 +51,7 @@ public class MealServiceTest {
             log.info(message);
         }
     };
+
     @AfterClass
     public static void afterClass() {
         log.info("Summary: \n{}", methodsTimes);
