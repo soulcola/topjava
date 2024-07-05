@@ -11,6 +11,7 @@ import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.repository.jdbc.converter.DateTimeConverter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -18,15 +19,14 @@ import java.util.List;
 @Repository
 public class JdbcMealRepository implements MealRepository {
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
-    private final DateTimeFormatter<?> dateTimeFormatter;
+    private final DateTimeConverter<?> dateTimeFormatter;
     private final JdbcTemplate jdbcTemplate;
-
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertMeal;
 
     @Autowired
-    public JdbcMealRepository(DateTimeFormatter<?> dateTimeFormatter, JdbcTemplate jdbcTemplate,
+    public JdbcMealRepository(DateTimeConverter<?> dateTimeFormatter, JdbcTemplate jdbcTemplate,
                               NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.dateTimeFormatter = dateTimeFormatter;
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
