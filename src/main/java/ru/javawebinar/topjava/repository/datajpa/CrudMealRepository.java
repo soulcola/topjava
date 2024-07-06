@@ -17,8 +17,6 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
     @Modifying
     int deleteByIdAndUserId(Integer mealId, Integer userId);
 
-    Optional<Meal> findByIdAndUserId(Integer mealId, Integer userId);
-
     List<Meal> findAllByUserIdOrderByDateTimeDesc(Integer userId);
 
     @Query("""
@@ -29,5 +27,9 @@ public interface CrudMealRepository extends JpaRepository<Meal, Integer> {
                                   @Param("startDateTime") LocalDateTime start,
                                   @Param("endDateTime") LocalDateTime end);
 
-
+    @Query("""
+            SELECT m FROM Meal m JOIN FETCH m.user u
+            WHERE m.id=:mealId AND u.id=:userId""")
+    Optional<Meal> findByIdAndUserId(@Param("mealId")Integer mealId,
+                                   @Param("userId")Integer userId);
 }

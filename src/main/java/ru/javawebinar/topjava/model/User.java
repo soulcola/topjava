@@ -12,6 +12,8 @@ import java.util.*;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
+//@NamedEntityGraph(name = "User.Meals",
+//        attributeNodes = {@NamedAttributeNode("meals"), @NamedAttributeNode("roles")})
 @NamedQueries({
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
         @NamedQuery(name = User.BY_EMAIL, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
@@ -50,6 +52,9 @@ public class User extends AbstractNamedEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
 
+    @OneToMany(mappedBy = "user")
+    private List<Meal> meals;
+
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
     @Range(min = 10, max = 10000)
     private int caloriesPerDay = DEFAULT_CALORIES_PER_DAY;
@@ -73,6 +78,10 @@ public class User extends AbstractNamedEntity {
         this.enabled = enabled;
         this.registered = registered;
         setRoles(roles);
+    }
+
+    public List<Meal> getMeals() {
+        return meals;
     }
 
     public String getEmail() {
