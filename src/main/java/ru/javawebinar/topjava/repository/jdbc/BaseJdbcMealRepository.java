@@ -8,27 +8,27 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import org.springframework.stereotype.Repository;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.jdbc.converter.DateTimeConverter;
 
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
-public class JdbcMealRepository implements MealRepository {
+import static ru.javawebinar.topjava.Profiles.JPA;
+
+
+public abstract class BaseJdbcMealRepository<T> implements MealRepository {
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
-    private final DateTimeConverter<?> dateTimeFormatter;
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 
     private final SimpleJdbcInsert insertMeal;
 
     @Autowired
-    public JdbcMealRepository(DateTimeConverter<?> dateTimeFormatter, JdbcTemplate jdbcTemplate,
-                              NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
-        this.dateTimeFormatter = dateTimeFormatter;
+    public BaseJdbcMealRepository(JdbcTemplate jdbcTemplate,
+                                  NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
@@ -39,7 +39,7 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        var date = dateTimeFormatter.format(meal.getDateTime());
+        T date = getDate(meal.getDateTime());
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
@@ -47,11 +47,6 @@ public class JdbcMealRepository implements MealRepository {
                 .addValue("date_time", date)
                 .addValue("user_id", userId);
 
-        return getMeal(meal, map, insertMeal, namedParameterJdbcTemplate);
-    }
-
-    static Meal getMeal(Meal meal, MapSqlParameterSource map, SimpleJdbcInsert insertMeal,
-                        NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         if (meal.isNew()) {
             Number newId = insertMeal.executeAndReturnKey(map);
             meal.setId(newId.intValue());
@@ -87,10 +82,16 @@ public class JdbcMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        var start = dateTimeFormatter.format(startDateTime);
-        var end = dateTimeFormatter.format(endDateTime);
+        var start = getDate(startDateTime);
+        var end = getDate2(endDateTime);
         return jdbcTemplate.query(
                 "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
                 ROW_MAPPER, userId, start, end);
+    }
+
+    protected abstract T getDate(LocalDateTime dateTime);
+
+    private Object getDate2(LocalDateTime date) {
+        return Profiles.getActiveDbProfile().equals(JPA) ? date : Timestamp.valueOf(date);
     }
 }

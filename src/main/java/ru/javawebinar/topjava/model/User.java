@@ -8,12 +8,12 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.time.LocalDateTime;
 import java.util.*;
 
 import static ru.javawebinar.topjava.util.MealsUtil.DEFAULT_CALORIES_PER_DAY;
 
-//@NamedEntityGraph(name = "User.Meals",
-//        attributeNodes = {@NamedAttributeNode("meals"), @NamedAttributeNode("roles")})
+
 @NamedQueries({
         @NamedQuery(name = User.DELETE, query = "DELETE FROM User u WHERE u.id=:id"),
         @NamedQuery(name = User.BY_EMAIL, query = "SELECT u FROM User u LEFT JOIN FETCH u.roles WHERE u.email=?1"),
@@ -53,7 +53,7 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
-    private List<Meal> meals;
+    private List<Meal> meals = new ArrayList<>();
 
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
     @Range(min = 10, max = 10000)
@@ -81,7 +81,9 @@ public class User extends AbstractNamedEntity {
     }
 
     public List<Meal> getMeals() {
-        return meals;
+        return meals.stream()
+                .sorted((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()))
+                .toList();
     }
 
     public String getEmail() {

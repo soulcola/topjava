@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.repository.datajpa;
 
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
@@ -8,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
+
 public class DataJpaMealRepository implements MealRepository {
 
     private final CrudMealRepository crudRepository;
@@ -19,13 +21,13 @@ public class DataJpaMealRepository implements MealRepository {
     }
 
     @Override
+    @Transactional
     public Meal save(Meal meal, int userId) {
         meal.setUser(crudUserRepository.getReferenceById(userId));
-        if (meal.isNew()) {
-            crudRepository.save(meal);
-            return meal;
+        if (meal.isNew() || get(meal.id(), userId) != null) {
+            return crudRepository.save(meal);
         }
-        return get(meal.id(), userId) == null ? null : crudRepository.save(meal);
+        return null;
     }
 
     @Override
@@ -35,13 +37,16 @@ public class DataJpaMealRepository implements MealRepository {
 
     @Override
     public Meal get(int id, int userId) {
-        return crudRepository.findByIdAndUserId(id, userId)
-                .orElse(null);
+        return crudRepository.findByIdAndUserId(id, userId);
+    }
+
+    public Meal getWithUser(int id, int userId) {
+        return crudRepository.getWithUser(id, userId);
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return crudRepository.findAllByUserIdOrderByDateTimeDesc(userId);
+        return crudRepository.findAllByUserId(userId);
     }
 
     @Override
