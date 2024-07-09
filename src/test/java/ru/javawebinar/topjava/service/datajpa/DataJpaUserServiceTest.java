@@ -21,7 +21,6 @@ public class DataJpaUserServiceTest extends BaseUserServiceTest {
         User actualUser = service.getWithMeals(USER_ID);
         MEAL_MATCHER.assertMatch(actualUser.getMeals(), meals);
         USER_MATCHER.assertMatch(actualUser, user);
-
     }
 
     @Test
@@ -31,8 +30,8 @@ public class DataJpaUserServiceTest extends BaseUserServiceTest {
 
     @Test
     public void getWithMealsGuest() {
-        var guest = service.getWithMeals(GUEST_ID);
-        Assertions.assertThat(guest.getMeals()).isEmpty();
-        System.out.println(guest);
+        var actual = service.getWithMeals(GUEST_ID);
+        USER_MATCHER.assertMatch(actual, guest);
+        Assertions.assertThat(actual.getMeals()).isEmpty();
     }
 }

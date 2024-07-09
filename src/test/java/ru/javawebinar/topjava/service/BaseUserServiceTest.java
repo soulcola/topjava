@@ -17,7 +17,6 @@ import java.util.List;
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
 public abstract class BaseUserServiceTest extends BaseServiceTest {
 
     @Autowired

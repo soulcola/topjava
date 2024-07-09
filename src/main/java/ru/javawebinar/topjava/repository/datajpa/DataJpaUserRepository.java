@@ -32,8 +32,9 @@ public class DataJpaUserRepository implements UserRepository {
         return crudRepository.findById(id).orElse(null);
     }
 
+    @Override
     public User getWithMeals(int id) {
-        return crudRepository.getUserById(id);
+        return crudRepository.getWithMeals(id);
     }
 
     @Override

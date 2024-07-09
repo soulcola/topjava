@@ -1,23 +1,29 @@
 package ru.javawebinar.topjava.service.datajpa;
 
 import org.junit.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.repository.MealRepository;
+import ru.javawebinar.topjava.repository.datajpa.DataJpaMealRepository;
 import ru.javawebinar.topjava.service.BaseMealServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.MealTestData.NOT_FOUND;
 import static ru.javawebinar.topjava.MealTestData.*;
-import static ru.javawebinar.topjava.Profiles.REPOSITORY_IMPLEMENTATION;
+import static ru.javawebinar.topjava.Profiles.DATAJPA;
 import static ru.javawebinar.topjava.UserTestData.*;
 
-@ActiveProfiles(profiles = REPOSITORY_IMPLEMENTATION)
+@ActiveProfiles(profiles = DATAJPA)
 public class DataJpaMealServiceTest extends BaseMealServiceTest {
+    @Autowired
+    private MealRepository repository;
 
     @Test
     public void getWithUser() {
+        System.out.println(repository.getWithUser(ADMIN_MEAL_ID, ADMIN_ID));
         Meal actual = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
         User actualUser = actual.getUser();
         USER_MATCHER.assertMatch(actualUser, admin);

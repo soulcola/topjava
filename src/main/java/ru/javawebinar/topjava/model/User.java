@@ -53,7 +53,8 @@ public class User extends AbstractNamedEntity {
     private Set<Role> roles;
 
     @OneToMany(mappedBy = "user")
-    private List<Meal> meals = new ArrayList<>();
+    @OrderBy("dateTime desc")
+    private List<Meal> meals;
 
     @Column(name = "calories_per_day", nullable = false, columnDefinition = "int default 2000")
     @Range(min = 10, max = 10000)
@@ -81,9 +82,7 @@ public class User extends AbstractNamedEntity {
     }
 
     public List<Meal> getMeals() {
-        return meals.stream()
-                .sorted((o1, o2) -> o2.getDateTime().compareTo(o1.getDateTime()))
-                .toList();
+        return meals;
     }
 
     public String getEmail() {

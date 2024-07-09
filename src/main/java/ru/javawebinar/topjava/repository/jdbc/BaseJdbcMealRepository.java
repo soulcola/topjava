@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.Profiles.JPA;
+import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
 
 
 public abstract class BaseJdbcMealRepository<T> implements MealRepository {
@@ -91,7 +91,11 @@ public abstract class BaseJdbcMealRepository<T> implements MealRepository {
 
     protected abstract T getDate(LocalDateTime dateTime);
 
+    /*
+    После выполнения разделения на основе профилей, можно предложить решение проще.
+    Кажется getDate2 как раз для этого подходит, но конечно сравнение должно быть с POSTGRES_DB
+     */
     private Object getDate2(LocalDateTime date) {
-        return Profiles.getActiveDbProfile().equals(JPA) ? date : Timestamp.valueOf(date);
+        return Profiles.getActiveDbProfile().equals(POSTGRES_DB) ? date : Timestamp.valueOf(date);
     }
 }
