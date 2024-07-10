@@ -6,7 +6,6 @@ import org.springframework.test.context.ActiveProfiles;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
-import ru.javawebinar.topjava.repository.datajpa.DataJpaMealRepository;
 import ru.javawebinar.topjava.service.BaseMealServiceTest;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
@@ -23,7 +22,6 @@ public class DataJpaMealServiceTest extends BaseMealServiceTest {
 
     @Test
     public void getWithUser() {
-        System.out.println(repository.getWithUser(ADMIN_MEAL_ID, ADMIN_ID));
         Meal actual = service.getWithUser(ADMIN_MEAL_ID, ADMIN_ID);
         User actualUser = actual.getUser();
         USER_MATCHER.assertMatch(actualUser, admin);

@@ -8,18 +8,15 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
-import ru.javawebinar.topjava.Profiles;
+import org.springframework.stereotype.Repository;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static ru.javawebinar.topjava.Profiles.POSTGRES_DB;
-
-
-public abstract class BaseJdbcMealRepository<T> implements MealRepository {
+@Repository
+public class JdbcMealRepository implements MealRepository {
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
     private final JdbcTemplate jdbcTemplate;
     private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -27,8 +24,8 @@ public abstract class BaseJdbcMealRepository<T> implements MealRepository {
     private final SimpleJdbcInsert insertMeal;
 
     @Autowired
-    public BaseJdbcMealRepository(JdbcTemplate jdbcTemplate,
-                                  NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
+    public JdbcMealRepository(JdbcTemplate jdbcTemplate,
+                              NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
                 .usingGeneratedKeyColumns("id");
@@ -39,12 +36,11 @@ public abstract class BaseJdbcMealRepository<T> implements MealRepository {
 
     @Override
     public Meal save(Meal meal, int userId) {
-        T date = getDate(meal.getDateTime());
         MapSqlParameterSource map = new MapSqlParameterSource()
                 .addValue("id", meal.getId())
                 .addValue("description", meal.getDescription())
                 .addValue("calories", meal.getCalories())
-                .addValue("date_time", date)
+                .addValue("date_time", meal.getDateTime())
                 .addValue("user_id", userId);
 
         if (meal.isNew()) {
@@ -82,20 +78,8 @@ public abstract class BaseJdbcMealRepository<T> implements MealRepository {
 
     @Override
     public List<Meal> getBetweenHalfOpen(LocalDateTime startDateTime, LocalDateTime endDateTime, int userId) {
-        var start = getDate(startDateTime);
-        var end = getDate2(endDateTime);
         return jdbcTemplate.query(
                 "SELECT * FROM meal WHERE user_id=?  AND date_time >=  ? AND date_time < ? ORDER BY date_time DESC",
-                ROW_MAPPER, userId, start, end);
-    }
-
-    protected abstract T getDate(LocalDateTime dateTime);
-
-    /*
-    После выполнения разделения на основе профилей, можно предложить решение проще.
-    Кажется getDate2 как раз для этого подходит, но конечно сравнение должно быть с POSTGRES_DB
-     */
-    private Object getDate2(LocalDateTime date) {
-        return Profiles.getActiveDbProfile().equals(POSTGRES_DB) ? date : Timestamp.valueOf(date);
+                ROW_MAPPER, userId, startDateTime, endDateTime);
     }
 }
