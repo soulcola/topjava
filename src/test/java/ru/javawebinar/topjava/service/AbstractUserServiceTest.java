@@ -2,11 +2,12 @@ package ru.javawebinar.topjava.service;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.CacheManager;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
-import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.JpaUtil;
@@ -21,12 +22,10 @@ import static org.junit.Assert.assertThrows;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 public abstract class AbstractUserServiceTest extends AbstractServiceTest {
+    private static final Logger log = LoggerFactory.getLogger(AbstractUserServiceTest.class);
 
     @Autowired
     protected UserService service;
-
-    @Autowired(required = false)
-    private CacheManager cacheManager;
 
     @Autowired(required = false)
     protected JpaUtil jpaUtil;
@@ -34,12 +33,17 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private ApplicationContext context;
+
     @Before
     public void setup() {
-        if (environment.matchesProfiles(Profiles.DATAJPA, Profiles.JPA)) {
-            cacheManager.getCache("users").clear();
-            jpaUtil.clear2ndLevelHibernateCache();
-        }
+        log.debug("hibernate.cache.use_second_level_cache = {}", environment.getProperty("hibernate.cache.use_second_level_cache"));
+        log.debug("cacheManager: {}", context.getBean("cacheManager").getClass().getName());
+//        if (environment.matchesProfiles(Profiles.DATAJPA, Profiles.JPA)) {
+//            cacheManager.getCache("users").clear();
+//            jpaUtil.clear2ndLevelHibernateCache();
+//        }
     }
 
     @Test
