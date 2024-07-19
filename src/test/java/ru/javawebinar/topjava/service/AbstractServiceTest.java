@@ -7,7 +7,6 @@ import org.junit.rules.Stopwatch;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.jdbc.SqlConfig;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -24,10 +23,7 @@ import static ru.javawebinar.topjava.util.ValidationUtil.getRootCause;
 })
 @RunWith(SpringRunner.class)
 @Sql(scripts = "classpath:db/populateDB.sql", config = @SqlConfig(encoding = "UTF-8"))
-@ActiveProfiles(resolver = ActiveDbProfileResolver.class)
-@TestPropertySource(properties = {
-        "hibernate.cache.use_second_level_cache=false"
-})
+@ActiveProfiles(resolver = ActiveDbProfileResolver.class, profiles = "test")
 public abstract class AbstractServiceTest {
 
     @ClassRule

@@ -8,11 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
+import ru.javawebinar.topjava.Profiles;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
+import javax.persistence.EntityManagerFactory;
 import javax.validation.ConstraintViolationException;
 import java.util.Date;
 import java.util.List;
@@ -30,20 +32,23 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Autowired(required = false)
     protected JpaUtil jpaUtil;
 
-    @Autowired
-    private Environment environment;
+    @Autowired(required = false)
+    public EntityManagerFactory entityManagerFactory;
+
+    @Autowired(required = true)
+    public Environment environment;
 
     @Autowired
     private ApplicationContext context;
 
     @Before
     public void setup() {
-        log.debug("hibernate.cache.use_second_level_cache = {}", environment.getProperty("hibernate.cache.use_second_level_cache"));
-        log.debug("cacheManager: {}", context.getBean("cacheManager").getClass().getName());
-//        if (environment.matchesProfiles(Profiles.DATAJPA, Profiles.JPA)) {
+        if (environment.matchesProfiles(Profiles.DATAJPA, Profiles.JPA)) {
 //            cacheManager.getCache("users").clear();
 //            jpaUtil.clear2ndLevelHibernateCache();
-//        }
+            Object o = entityManagerFactory.getProperties().get("hibernate.cache.use_second_level_cache");
+            log.debug("hibernate.cache.use_second_level_cache = {}", o);
+        }
     }
 
     @Test
@@ -71,6 +76,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void deletedNotFound() {
         assertThrows(NotFoundException.class, () -> service.delete(NOT_FOUND));
+    }
+
+    @Test
+    public void cache() {
+        User user = service.get(ADMIN_ID);
+        User user2 = service.get(ADMIN_ID);
+//        USER_MATCHER.assertMatch(user, admin);
     }
 
     @Test
