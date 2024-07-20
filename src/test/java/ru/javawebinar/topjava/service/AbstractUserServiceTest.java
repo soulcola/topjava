@@ -43,7 +43,17 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void create() {
+    public void createGuest() {
+        User created = service.create(getNewGuest());
+        int newId = created.id();
+        User newGuest = getNewGuest();
+        newGuest.setId(newId);
+        USER_MATCHER.assertMatch(created, newGuest);
+        USER_MATCHER.assertMatch(service.get(newId), newGuest);
+    }
+
+    @Test
+    public void createUser() {
         User created = service.create(getNew());
         int newId = created.id();
         User newUser = getNew();
@@ -69,11 +79,15 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void delete() {
-        service.delete(USER_ID);
+    public void deleteUser() {
         service.delete(ADMIN_ID);
-        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
         assertThrows(NotFoundException.class, () -> service.get(ADMIN_ID));
+    }
+
+    @Test
+    public void deleteAdmin() {
+        service.delete(USER_ID);
+        assertThrows(NotFoundException.class, () -> service.get(USER_ID));
     }
 
     @Test
@@ -82,10 +96,14 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void get() {
+    public void getUser() {
         User user = service.get(USER_ID);
-        User admin = service.get(ADMIN_ID);
         USER_MATCHER.assertMatch(user, UserTestData.user);
+    }
+
+    @Test
+    public void getAdmin() {
+        User admin = service.get(ADMIN_ID);
         USER_MATCHER.assertMatch(admin, UserTestData.admin);
     }
 
@@ -95,10 +113,14 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void getByEmail() {
+    public void getUserByEmail() {
         User user = service.getByEmail("user@yandex.ru");
-        User admin = service.getByEmail("admin@gmail.com");
         USER_MATCHER.assertMatch(user, UserTestData.user);
+    }
+
+    @Test
+    public void getAdminByEmail() {
+        User admin = service.getByEmail("admin@gmail.com");
         USER_MATCHER.assertMatch(admin, UserTestData.admin);
     }
 
@@ -115,6 +137,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         service.update(updated);
         USER_MATCHER.assertMatch(service.get(ADMIN_ID), getUpdatedAdmin());
     }
+    @Test
+    public void updateToGuest() {
+        User updated = getUpdatedAdminWoRoles();
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(ADMIN_ID), getUpdatedAdminWoRoles());
+    }
+
 
     @Test
     public void getAll() {

@@ -60,8 +60,9 @@ public class JdbcUserRepository implements UserRepository {
                     user.setRoles(new HashSet<>());
                     users.put(id, user);
                 }
+                User finalUser = user;
                 Optional.ofNullable(rs.getString("role"))
-                        .ifPresent(role -> users.get(id).getRoles().add(Role.valueOf(role)));
+                        .ifPresent(role -> finalUser.getRoles().add(Role.valueOf(role)));
             }
             return new ArrayList<>(users.values());
         }
@@ -73,7 +74,6 @@ public class JdbcUserRepository implements UserRepository {
         validate(user);
 
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
-        List<Role> roles = new ArrayList<>(user.getRoles());
 
         if (user.isNew()) {
             Number newKey = insertUser.executeAndReturnKey(parameterSource);
@@ -86,23 +86,25 @@ public class JdbcUserRepository implements UserRepository {
         } else {
             jdbcTemplate.update("DELETE FROM user_role WHERE user_id=?", user.id());
         }
-        batchUpdate(user.id(), roles);
+        batchUpdate(user.id(), new ArrayList<>(user.getRoles()));
         return user;
     }
 
     private void batchUpdate(int id, List<Role> roles) {
-        jdbcTemplate.batchUpdate(
-                "INSERT INTO user_role (user_id, role) VALUES (?,?)",
-                new BatchPreparedStatementSetter() {
-                    public void setValues(PreparedStatement ps, int i) throws SQLException {
-                        ps.setInt(1, id);
-                        ps.setString(2, roles.get(i).name());
-                    }
+        if (!roles.isEmpty()) {
+            jdbcTemplate.batchUpdate(
+                    "INSERT INTO user_role (user_id, role) VALUES (?,?)",
+                    new BatchPreparedStatementSetter() {
+                        public void setValues(PreparedStatement ps, int i) throws SQLException {
+                            ps.setInt(1, id);
+                            ps.setString(2, roles.get(i).name());
+                        }
 
-                    public int getBatchSize() {
-                        return roles.size();
-                    }
-                });
+                        public int getBatchSize() {
+                            return roles.size();
+                        }
+                    });
+        }
     }
 
     @Override
