@@ -5,13 +5,12 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.DataAccessException;
 import ru.javawebinar.topjava.Profiles;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.repository.JpaUtil;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.persistence.EntityManagerFactory;
@@ -30,22 +29,14 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     protected UserService service;
 
     @Autowired(required = false)
-    protected JpaUtil jpaUtil;
-
-    @Autowired(required = false)
     public EntityManagerFactory entityManagerFactory;
 
-    @Autowired(required = true)
-    public Environment environment;
-
     @Autowired
-    private ApplicationContext context;
+    private Environment environment;
 
     @Before
     public void setup() {
         if (environment.matchesProfiles(Profiles.DATAJPA, Profiles.JPA)) {
-//            cacheManager.getCache("users").clear();
-//            jpaUtil.clear2ndLevelHibernateCache();
             Object o = entityManagerFactory.getProperties().get("hibernate.cache.use_second_level_cache");
             log.debug("hibernate.cache.use_second_level_cache = {}", o);
         }
@@ -62,6 +53,16 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
+    public void createAdmin() {
+        User created = service.create(getNewAdmin());
+        int newId = created.id();
+        User newAdmin = getNewAdmin();
+        newAdmin.setId(newId);
+        USER_MATCHER.assertMatch(created, newAdmin);
+        USER_MATCHER.assertMatch(service.get(newId), newAdmin);
+    }
+
+    @Test
     public void duplicateMailCreate() {
         assertThrows(DataAccessException.class, () ->
                 service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.USER)));
@@ -70,7 +71,9 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     @Test
     public void delete() {
         service.delete(USER_ID);
+        service.delete(ADMIN_ID);
         assertThrows(NotFoundException.class, () -> service.get(USER_ID));
+        assertThrows(NotFoundException.class, () -> service.get(ADMIN_ID));
     }
 
     @Test
@@ -79,16 +82,11 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
     }
 
     @Test
-    public void cache() {
-        User user = service.get(ADMIN_ID);
-        User user2 = service.get(ADMIN_ID);
-//        USER_MATCHER.assertMatch(user, admin);
-    }
-
-    @Test
     public void get() {
-        User user = service.get(ADMIN_ID);
-        USER_MATCHER.assertMatch(user, admin);
+        User user = service.get(USER_ID);
+        User admin = service.get(ADMIN_ID);
+        USER_MATCHER.assertMatch(user, UserTestData.user);
+        USER_MATCHER.assertMatch(admin, UserTestData.admin);
     }
 
     @Test
@@ -98,8 +96,10 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
 
     @Test
     public void getByEmail() {
-        User user = service.getByEmail("admin@gmail.com");
-        USER_MATCHER.assertMatch(user, admin);
+        User user = service.getByEmail("user@yandex.ru");
+        User admin = service.getByEmail("admin@gmail.com");
+        USER_MATCHER.assertMatch(user, UserTestData.user);
+        USER_MATCHER.assertMatch(admin, UserTestData.admin);
     }
 
     @Test
@@ -107,6 +107,13 @@ public abstract class AbstractUserServiceTest extends AbstractServiceTest {
         User updated = getUpdated();
         service.update(updated);
         USER_MATCHER.assertMatch(service.get(USER_ID), getUpdated());
+    }
+
+    @Test
+    public void updateAdmin() {
+        User updated = getUpdatedAdmin();
+        service.update(updated);
+        USER_MATCHER.assertMatch(service.get(ADMIN_ID), getUpdatedAdmin());
     }
 
     @Test

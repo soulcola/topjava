@@ -4,16 +4,14 @@
 <%@ taglib prefix="fn" uri="http://topjava.javawebinar.ru/functions" %>
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 <html>
-<head>
-    <title>Meals</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
+<jsp:include page="fragments/headTag.jsp"/>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
+
 <section>
-    <h3><a href="${pageContext.request.contextPath}"><spring:message code="app.home"/></a></h3>
     <hr/>
     <h2><spring:message code="meal.title"/></h2>
-    <form method="get" action="meals/filter">
+    <form method="get" action="${pageContext.request.contextPath}/meals/filter">
         <dl>
             <dt><spring:message code="filter.fromdate"/></dt>
             <dd><input type="date" name="startDate" value="${param.startDate}"></dd>
@@ -57,10 +55,11 @@
                 <td>${meal.description}</td>
                 <td>${meal.calories}</td>
                 <td><a href="${pageContext.request.contextPath}/meals/${meal.id}/update"><spring:message code="action.update"/></a></td>
-                <td><a href="${pageContext.request.contextPath}/meals/delete?id=${meal.id}"><spring:message code="action.delete"/></a></td>
+                <td><a href="${pageContext.request.contextPath}/meals/${meal.id}/delete"><spring:message code="action.delete"/></a></td>
             </tr>
         </c:forEach>
     </table>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

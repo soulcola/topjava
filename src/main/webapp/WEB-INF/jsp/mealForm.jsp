@@ -3,24 +3,15 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
 
 <html>
-<head>
-    <title>Meal</title>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/resources/css/style.css">
-</head>
+<jsp:include page="fragments/headTag.jsp"/>
 <body>
+<jsp:include page="fragments/bodyHeader.jsp"/>
+
 <section>
 
-    <h3><a href="${pageContext.request.contextPath}"><spring:message code="app.home"/></a></h3>
     <hr>
     <h2>
-        <c:choose>
-            <c:when test="${action eq 'create'}">
-                <spring:message code='meal.add'/>
-            </c:when>
-            <c:otherwise>
-                <spring:message code='meal.update'/>
-            </c:otherwise>
-        </c:choose>
+        <spring:message code="${not empty meal.id ?  'meal.update': 'meal.add'}"/>
     </h2>
     <jsp:useBean id="meal" type="ru.javawebinar.topjava.model.Meal" scope="request"/>
     <form method="post" action="${pageContext.request.contextPath}/meals">
@@ -41,5 +32,6 @@
         <button onclick="window.history.back()" type="button"><spring:message code='button.cancel'/></button>
     </form>
 </section>
+<jsp:include page="fragments/footer.jsp"/>
 </body>
 </html>

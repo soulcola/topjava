@@ -21,7 +21,7 @@
     <!-- Choose profile from (hsqldb/ postgres) and (jdbc/ datajpa/ jpa) -->
 
     <beans profile="hsqldb">
-        <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE"/>
+        <context:property-placeholder location="classpath:db/hsqldb.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
 
         <!--no pooling-->
         <bean id="dataSource"
@@ -42,7 +42,7 @@
             <property name="staticMethod" value="org.slf4j.bridge.SLF4JBridgeHandler.install"/>
         </bean>
 
-        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE"/>
+        <context:property-placeholder location="classpath:db/postgres.properties" system-properties-mode="OVERRIDE" ignore-unresolvable="true"/>
 
         <bean id="dataSource"
               class="org.apache.tomcat.jdbc.pool.DataSource"
@@ -60,6 +60,7 @@
 
     <beans profile="jdbc, jpa, datajpa">
         <tx:annotation-driven/>
+        <context:property-placeholder location="classpath:db/db.properties" ignore-unresolvable="true"/>
     </beans>
 
     <beans profile="jdbc">
@@ -87,7 +88,7 @@
                 <map>
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).FORMAT_SQL}" value="${hibernate.format_sql}"/>
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).USE_SQL_COMMENTS}" value="${hibernate.use_sql_comments}"/>
-                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).JPA_PROXY_COMPLIANCE}" value="true"/>
+                    <entry key="#{T(org.hibernate.cfg.AvailableSettings).JPA_PROXY_COMPLIANCE}" value="false"/>
                     <!--<entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_AUTO}" value="${hibernate.hbm2ddl.auto}"/>-->
 
                     <!--https://github.com/hibernate/hibernate-orm/blob/master/documentation/src/main/asciidoc/userguide/chapters/caching/Caching.adoc#caching-provider-jcache-->

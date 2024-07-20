@@ -10,13 +10,12 @@ import javax.validation.*;
 import java.util.Set;
 
 public class ValidationUtil {
-
-    private ValidationUtil() {
-    }
-
     public static final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
     public static final Validator validator = validatorFactory.getValidator();
+
+    private ValidationUtil() {
+    }
 
     public static void validate(@NonNull AbstractBaseEntity entity) {
         Set<ConstraintViolation<AbstractBaseEntity>> constraintViolations = validator.validate(entity);

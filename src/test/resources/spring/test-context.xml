@@ -6,8 +6,7 @@
 
     <beans profile="test">
         <bean id="ehCacheManager" class="org.springframework.cache.support.NoOpCacheManager"/>
-        <context:property-placeholder location="classpath:spring/postgres-test.properties" ignore-unresolvable="true"
-                                      order="2"/>
+        <context:property-placeholder location="classpath:spring/db-test.properties" ignore-unresolvable="true" order="2"/>
     </beans>
 
 </beans>
