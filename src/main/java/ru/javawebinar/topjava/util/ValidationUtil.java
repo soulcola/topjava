@@ -17,8 +17,8 @@ public class ValidationUtil {
     private ValidationUtil() {
     }
 
-    public static void validate(@NonNull AbstractBaseEntity entity) {
-        Set<ConstraintViolation<AbstractBaseEntity>> constraintViolations = validator.validate(entity);
+    public static <T extends AbstractBaseEntity> void validate(@NonNull T entity) {
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(entity);
         if (!constraintViolations.isEmpty()) {
             throw new ConstraintViolationException(constraintViolations);
         }
