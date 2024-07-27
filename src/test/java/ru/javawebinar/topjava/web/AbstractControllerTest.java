@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,6 +37,7 @@ public abstract class AbstractControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
+    @DateTimeFormat
     private WebApplicationContext webApplicationContext;
 
     @PostConstruct
