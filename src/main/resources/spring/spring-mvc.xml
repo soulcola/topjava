@@ -44,8 +44,8 @@
         </bean>
     -->
 
-    <bean id="customLocalDateConverter" class="ru.javawebinar.topjava.converter.CustomConditionalLocalDateConverter"/>
-    <bean id="customLocalTimeConverter" class="ru.javawebinar.topjava.converter.CustomConditionalLocalTimeConverter"/>
+    <bean id="customLocalDateConverter" class="ru.javawebinar.topjava.web.converter.CustomConditionalLocalDateConverter"/>
+    <bean id="customLocalTimeConverter" class="ru.javawebinar.topjava.web.converter.CustomConditionalLocalTimeConverter"/>
 
 
     <bean id="conversionService" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">

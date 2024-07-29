@@ -10,8 +10,6 @@ import ru.javawebinar.topjava.model.User;
 import java.net.URI;
 import java.util.List;
 
-import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
-
 @RestController
 @RequestMapping(value = AdminRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class AdminRestController extends AbstractUserController {
@@ -59,6 +57,7 @@ public class AdminRestController extends AbstractUserController {
         return super.getByMail(email);
     }
 
+    @Override
     @GetMapping("/{id}/with-meals")
     public User getWithMeals(@PathVariable int id) {
         return super.getWithMeals(id);

@@ -1,6 +1,7 @@
 package ru.javawebinar.topjava.web;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.web.SpringJUnitWebConfig;
@@ -29,6 +30,8 @@ public abstract class AbstractControllerTest {
 
     private static final CharacterEncodingFilter CHARACTER_ENCODING_FILTER = new CharacterEncodingFilter();
 
+    public boolean isDataJpaActive;
+
     static {
         CHARACTER_ENCODING_FILTER.setEncoding("UTF-8");
         CHARACTER_ENCODING_FILTER.setForceEncoding(true);
@@ -40,8 +43,12 @@ public abstract class AbstractControllerTest {
     @DateTimeFormat
     private WebApplicationContext webApplicationContext;
 
+    @Autowired
+    private Environment env;
+
     @PostConstruct
     private void postConstruct() {
+        isDataJpaActive = env.matchesProfiles(Profiles.DATAJPA);
         mockMvc = MockMvcBuilders
                 .webAppContextSetup(webApplicationContext)
                 .addFilter(CHARACTER_ENCODING_FILTER)
