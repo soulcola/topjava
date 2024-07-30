@@ -50,29 +50,27 @@ class AdminRestControllerTest extends AbstractControllerTest {
     @Test
     void getUserWithMeals() throws Exception {
         Assumptions.assumeTrue(isDataJpaActive);
-        perform(MockMvcRequestBuilders.get(REST_URL + USER_ID + "/with-meals"))
+        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + USER_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(user))
-                .andExpect(result ->
-                        MEAL_MATCHER.assertMatch(
-                                JsonUtil.readValue(result.getResponse().getContentAsString(), User.class).getMeals(),
-                                meals));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        User actual = USER_MATCHER.readFromJson(action);
+        USER_MATCHER.assertMatch(actual, user);
+        MEAL_MATCHER.assertMatch(actual.getMeals(), meals);
     }
 
     @Test
     void getAdminWithMeals() throws Exception {
         Assumptions.assumeTrue(isDataJpaActive);
-        perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
+        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + ADMIN_ID + "/with-meals"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(admin))
-                .andExpect(result ->
-                        MEAL_MATCHER.assertMatch(
-                                JsonUtil.readValue(result.getResponse().getContentAsString(), User.class).getMeals(),
-                                List.of(adminMeal2, adminMeal1)));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        User actual = USER_MATCHER.readFromJson(action);
+        USER_MATCHER.assertMatch(actual, admin);
+        MEAL_MATCHER.assertMatch(actual.getMeals(), List.of(adminMeal2, adminMeal1));
     }
 
 

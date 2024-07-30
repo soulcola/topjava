@@ -4,7 +4,9 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.javawebinar.topjava.UserTestData;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.service.UserService;
 import ru.javawebinar.topjava.web.AbstractControllerTest;
@@ -34,14 +36,14 @@ class ProfileRestControllerTest extends AbstractControllerTest {
     @Test
     void getWithMeals() throws Exception {
         Assumptions.assumeTrue(isDataJpaActive);
-        perform(MockMvcRequestBuilders.get(REST_URL + "/with-meals"))
+        ResultActions action = perform(MockMvcRequestBuilders.get(REST_URL + "/with-meals"))
                 .andExpect(status().isOk())
                 .andDo(print())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(USER_MATCHER.contentJson(user))
-                .andExpect(result -> MEAL_MATCHER.assertMatch(
-                        JsonUtil.readValue(result.getResponse().getContentAsString(), User.class).getMeals(),
-                        meals));
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
+
+        User actual = USER_MATCHER.readFromJson(action);
+        USER_MATCHER.assertMatch(actual, user);
+        MEAL_MATCHER.assertMatch(actual.getMeals(), meals);
     }
 
     @Test
@@ -53,7 +55,7 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
     @Test
     void update() throws Exception {
-        User updated = getUpdated();
+        User updated = UserTestData.getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL).contentType(MediaType.APPLICATION_JSON)
                 .content(JsonUtil.writeValue(updated)))
                 .andDo(print())

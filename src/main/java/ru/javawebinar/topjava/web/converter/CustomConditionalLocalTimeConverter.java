@@ -1,7 +1,7 @@
 package ru.javawebinar.topjava.web.converter;
 
 import org.springframework.core.convert.converter.Converter;
-import org.springframework.util.StringUtils;
+import ru.javawebinar.topjava.util.DateTimeUtil;
 
 import java.time.LocalTime;
 
@@ -9,9 +9,6 @@ public class CustomConditionalLocalTimeConverter implements Converter<String, Lo
 
     @Override
     public LocalTime convert(String source) {
-        if (StringUtils.hasLength(source)) {
-            return LocalTime.parse(source);
-        }
-        return null;
+        return DateTimeUtil.parseLocalTime(source);
     }
 }

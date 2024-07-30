@@ -38,5 +38,5 @@ curl --location 'http://localhost:8080/topjava/rest/meals' \
 
 Get meals between dates
 ```
-curl --location 'http://localhost:8080/topjava/rest/meals/get-between?startDate=2020-01-31&endDate=2020-01-31&startTime=10%3A00&endTime=12%3A00'
+curl --location 'http://localhost:8080/topjava/rest/meals/between?startDate=2020-01-31&endDate=2020-01-31&startTime=10%3A00&endTime=12%3A00'
 ```
