@@ -2,11 +2,23 @@ const userAjaxUrl = "admin/users/";
 
 // https://stackoverflow.com/a/5064235/548473
 const ctx = {
-    ajaxUrl: userAjaxUrl
+    ajaxUrl: userAjaxUrl,
 };
 
 // $(document).ready(function () {
 $(function () {
+    $(document).on("click", ":input:checkbox", function() {
+        let id = $(this).closest('tr').attr("id")
+        $.ajax({
+            contentType: "application/json; charset=UTF-8",
+            type: "POST",
+            url: ctx.ajaxUrl + id,
+            data: JSON.stringify($(this).is(":checked"))
+        }).done(function () {
+            updateTable();
+        });
+    });
+
     makeEditable(
         $("#datatable").DataTable({
             "paging": false,

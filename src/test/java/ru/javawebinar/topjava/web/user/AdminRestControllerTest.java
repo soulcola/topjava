@@ -43,14 +43,6 @@ class AdminRestControllerTest extends AbstractControllerTest {
     }
 
     @Test
-    void delete() throws Exception {
-        perform(MockMvcRequestBuilders.delete(REST_URL + USER_ID))
-                .andDo(print())
-                .andExpect(status().isNoContent());
-        assertThrows(NotFoundException.class, () -> userService.get(USER_ID));
-    }
-
-    @Test
     void update() throws Exception {
         User updated = getUpdated();
         perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
@@ -59,6 +51,14 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .andExpect(status().isNoContent());
 
         USER_MATCHER.assertMatch(userService.get(USER_ID), updated);
+    }
+
+    @Test
+    void delete() throws Exception {
+        perform(MockMvcRequestBuilders.delete(REST_URL + USER_ID))
+                .andDo(print())
+                .andExpect(status().isNoContent());
+        assertThrows(NotFoundException.class, () -> userService.get(USER_ID));
     }
 
     @Test
