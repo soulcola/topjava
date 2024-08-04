@@ -7,6 +7,7 @@ const ctx = {
 };
 
 function clearFilter() {
+    $('#filter').trigger("reset");
     updateTable();
 }
 
@@ -14,12 +15,7 @@ function updateMealTable() {
     $.ajax({
         url: ctx.ajaxUrl + "filter",
         type: "GET",
-        data: {
-            startDate: $("#startDate").val(),
-            endDate: $("#endDate").val(),
-            startTime: $("#startTime").val(),
-            endTime: $("#endTime").val()
-        },
+        data: $("#filter").serialize(),
         success: function (data) {
             response(data);
         }

@@ -55,6 +55,7 @@ public abstract class AbstractUserController {
     }
 
     public void switchEnabled(boolean isEnabled, int id) {
-        service.switchEnable(isEnabled, id);
+        log.info("User with id {} is {}", id, isEnabled ? "enabled" : "disabled");
+        service.switchEnabled(isEnabled, id);
     }
 }

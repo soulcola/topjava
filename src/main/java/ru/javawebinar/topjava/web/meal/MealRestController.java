@@ -64,8 +64,6 @@ public class MealRestController extends AbstractMealController {
             @RequestParam @Nullable LocalDate endDate,
             @RequestParam @Nullable LocalTime endTime) {
 
-        var res = super.getBetween(startDate, startTime, endDate, endTime);
-        System.out.println(res);
-        return res;
+        return super.getBetween(startDate, startTime, endDate, endTime);
     }
 }

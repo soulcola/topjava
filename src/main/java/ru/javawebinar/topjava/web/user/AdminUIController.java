@@ -32,7 +32,7 @@ public class AdminUIController extends AbstractUserController {
     @PostMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void switchEnabled(@RequestBody boolean isEnabled,
-                       @PathVariable int id) {
+                              @PathVariable int id) {
         super.switchEnabled(isEnabled, id);
     }
 
