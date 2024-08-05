@@ -42,12 +42,7 @@ $(function () {
                     "orderable": false
                 }
             ],
-            "order": [
-                [
-                    0,
-                    "asc"
-                ]
-            ]
+            "order": []
         })
     );
 });

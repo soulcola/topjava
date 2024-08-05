@@ -98,7 +98,8 @@ class AdminRestControllerTest extends AbstractControllerTest {
     void disable() throws Exception {
         perform(MockMvcRequestBuilders.patch(REST_URL + USER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(JsonUtil.writeValue(Boolean.FALSE)));
+                .content(JsonUtil.writeValue(Boolean.FALSE)))
+                .andExpect(status().isNoContent());
         User expected = new User(user);
         expected.setEnabled(false);
         USER_MATCHER.assertMatch(userService.get(USER_ID), expected);
