@@ -35,7 +35,7 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "name"
+                    "data": "name",
                 },
                 {
                     "data": "email",
