@@ -115,51 +115,57 @@
 <script src="webjars/datetimepicker/2.5.20-1/jquery.js"></script>
 <script src="webjars/datetimepicker/2.5.20-1/build/jquery.datetimepicker.full.min.js"></script>
 <script type="text/javascript">
-    let startDATE = $('#startDate');
+    let startDate = $('#startDate');
     let endDate = $('#endDate');
-    startDATE.datetimepicker({
+    let startTime = $('#startTime');
+    let endTime = $('#endTime');
+    startDate.datetimepicker({
         timepicker: false,
         format: "Y-m-d",
-        onShow:function( ct ) {
+        onShow: function (ct) {
             this.setOptions({
-                maxDate: endDate.val() ? endDate.val() : false
+                maxDate: endDate.val() ? endDate.val() : 0
             })
         }
     });
     endDate.datetimepicker({
         timepicker: false,
         format: "Y-m-d",
-        onShow:function( ct ) {
+        onShow: function (ct) {
             this.setOptions({
-                maxDate: startDATE.val() ? startDATE.val() : 0,
+                minDate: startDate.val() ? startDate.val() : false,
+                maxDate: 0
             })
         }
     });
-    $('#startTime').datetimepicker({
+    startTime.datetimepicker({
         datepicker: false,
         step: 10,
-        format: "H:i"
+        format: "H:i",
+        onShow: function (ct) {
+            this.setOptions({
+                maxTime: endTime.val() ? endTime.val() : false
+            })
+        }
     });
-    $('#endTime').datetimepicker({
+    endTime.datetimepicker({
         datepicker: false,
         step: 10,
-        format: "H:i"
+        format: "H:i",
+        onShow: function (ct) {
+            this.setOptions({
+                minTime: startTime.val() ? startTime.val() : false
+            })
+        }
+
     });
     $('#dateTime').datetimepicker({
         format: "Y-m-d H:i"
     });
 
-    <c:set var="add">
-        <spring:message code="meal.add"/>
-    </c:set>
-
-    <c:set var="edit">
-        <spring:message code="meal.edit"/>
-    </c:set>
-
     <jsp:include page="fragments/i18n.jsp">
-        <jsp:param name="addMsg" value="${add}"/>
-        <jsp:param name="editMsg" value="${edit}"/>
+    <jsp:param name="addCode" value="meal.add"/>
+    <jsp:param name="editCode" value="meal.edit"/>
     </jsp:include>
 </script>
 </html>

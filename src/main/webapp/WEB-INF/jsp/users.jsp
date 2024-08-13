@@ -79,17 +79,10 @@
 <jsp:include page="fragments/footer.jsp"/>
 </body>
 <script type="text/javascript">
-    <c:set var="add">
-        <spring:message code="user.add"/>
-    </c:set>
-
-    <c:set var="edit">
-        <spring:message code="user.edit"/>
-    </c:set>
 
     <jsp:include page="fragments/i18n.jsp">
-        <jsp:param name="addMsg" value="${add}"/>
-        <jsp:param name="editMsg" value="${edit}"/>
+        <jsp:param name="addCode" value="user.add"/>
+        <jsp:param name="editCode" value="user.edit"/>
     </jsp:include>
 </script>
 </html>
