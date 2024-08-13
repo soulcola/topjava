@@ -13,7 +13,6 @@ import ru.javawebinar.topjava.util.ValidationUtil;
 
 import javax.validation.Valid;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/admin/users", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -21,6 +20,7 @@ public class AdminUIController extends AbstractUserController {
 
     @Autowired
     private MessageSource messageSource;
+
     @Override
     @GetMapping
     public List<User> getAll() {
@@ -41,7 +41,6 @@ public class AdminUIController extends AbstractUserController {
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.NO_CONTENT)
     public ResponseEntity<String> createOrUpdate(@Valid UserTo userTo, BindingResult result) {
         if (result.hasErrors()) {
             return ValidationUtil.collectErrors(result, messageSource);

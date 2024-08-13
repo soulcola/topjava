@@ -38,14 +38,7 @@ $(function () {
             "info": true,
             "columns": [
                 {
-                    "data": "dateTime",
-                    "render": function (data, type, row) {
-                        if (type === "display") {
-                            date = new Date(data)
-                            return data.replace("T", " ");
-                        }
-                        return data;
-                    }
+                    "data": "dateTime"
                 },
                 {
                     "data": "description"

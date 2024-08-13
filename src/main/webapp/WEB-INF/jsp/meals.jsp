@@ -70,7 +70,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title" id="modalTitle"><spring:message code="meal.add"/></h4>
+                <h4 class="modal-title" id="modalTitle"></h4>
                 <button type="button" class="close" data-dismiss="modal" onclick="closeNoty()">&times;</button>
             </div>
             <div class="modal-body">
@@ -79,7 +79,7 @@
 
                     <div class="form-group">
                         <label for="dateTime" class="col-form-label"><spring:message code="meal.dateTime"/></label>
-                        <input type="myDate" class="form-control" id="dateTime" name="dateTime"
+                        <input type="text" class="form-control" id="dateTime" name="dateTime"
                                placeholder="<spring:message code="meal.dateTime"/>">
                     </div>
 
@@ -115,13 +115,25 @@
 <script src="webjars/datetimepicker/2.5.20-1/jquery.js"></script>
 <script src="webjars/datetimepicker/2.5.20-1/build/jquery.datetimepicker.full.min.js"></script>
 <script type="text/javascript">
-    $('#startDate').datetimepicker({
+    let startDATE = $('#startDate');
+    let endDate = $('#endDate');
+    startDATE.datetimepicker({
         timepicker: false,
-        format: "Y-m-d"
+        format: "Y-m-d",
+        onShow:function( ct ) {
+            this.setOptions({
+                maxDate: endDate.val() ? endDate.val() : false
+            })
+        }
     });
-    $('#endDate').datetimepicker({
+    endDate.datetimepicker({
         timepicker: false,
-        format: "Y-m-d"
+        format: "Y-m-d",
+        onShow:function( ct ) {
+            this.setOptions({
+                maxDate: startDATE.val() ? startDATE.val() : 0,
+            })
+        }
     });
     $('#startTime').datetimepicker({
         datepicker: false,
@@ -136,10 +148,18 @@
     $('#dateTime').datetimepicker({
         format: "Y-m-d H:i"
     });
-    const i18n = {};
-    i18n["addTitle"] = '<spring:message code="meal.add"/>';
-    i18n["editTitle"] = '<spring:message code="meal.edit"/>';
 
-    <jsp:include page="fragments/i18n.jsp"/>
+    <c:set var="add">
+        <spring:message code="meal.add"/>
+    </c:set>
+
+    <c:set var="edit">
+        <spring:message code="meal.edit"/>
+    </c:set>
+
+    <jsp:include page="fragments/i18n.jsp">
+        <jsp:param name="addMsg" value="${add}"/>
+        <jsp:param name="editMsg" value="${edit}"/>
+    </jsp:include>
 </script>
 </html>
