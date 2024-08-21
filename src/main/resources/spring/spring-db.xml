@@ -96,6 +96,7 @@
 
                     <entry key="javax.persistence.validation.group.pre-persist" value="ru.javawebinar.topjava.View$Persist"/>
                     <entry key="javax.persistence.validation.group.pre-update" value="ru.javawebinar.topjava.View$Persist"/>
+                    <entry key="javax.persistence.validation.mode" value="none"/>
 <!--
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_ACTION}" value="drop-and-create"/>
                     <entry key="#{T(org.hibernate.cfg.AvailableSettings).HBM2DDL_SCRIPTS_CREATE_TARGET}" value="${TOPJAVA_ROOT}/config/ddl/create.ddl"/>

@@ -43,13 +43,14 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(HttpStatus.CONFLICT)  // 409
-    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ExceptionHandler({DataIntegrityViolationException.class})
     public ErrorInfo conflict(HttpServletRequest req, DataIntegrityViolationException e) {
         return logAndGetErrorInfo(req, e, true, DATA_ERROR);
     }
 
     @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)  // 422
-    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class, BindException.class})
+    @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class,
+            HttpMessageNotReadableException.class, BindException.class})
     public ErrorInfo validationError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
     }
@@ -69,13 +70,14 @@ public class ExceptionInfoHandler {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
         List<String> errors = new ArrayList<>();
-        errors.addAll(((BindException) e).getFieldErrors().stream()
-                .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
-                .toList());
-
-        errors.addAll(((BindException) e).getGlobalErrors().stream()
-                .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                .toList());
+        if (e instanceof BindException bindException) {
+            errors.addAll(bindException.getFieldErrors().stream()
+                    .map(fe -> String.format("[%s] %s", fe.getField(), fe.getDefaultMessage()))
+                    .toList());
+            errors.addAll(bindException.getGlobalErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .toList());
+        } else errors.add(e.getMessage());
 
         return new ErrorInfo(req.getRequestURL(), errorType, errors);
     }

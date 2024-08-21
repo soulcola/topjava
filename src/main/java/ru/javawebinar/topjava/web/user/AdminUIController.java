@@ -6,7 +6,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.web.validator.CreateAction;
 
+import javax.validation.groups.Default;
 import java.util.List;
 
 @RestController
@@ -34,7 +36,7 @@ public class AdminUIController extends AbstractUserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void createOrUpdate(@Validated UserTo userTo) {
+    public void createOrUpdate(@Validated({Default.class, CreateAction.class}) UserTo userTo) {
         if (userTo.isNew()) {
             super.create(userTo);
         } else {

@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.util.exception;
+package ru.javawebinar.topjava.web.validator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -7,11 +7,11 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Constraint(validatedBy = DateTimeValidator.class)
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ValidDateTime {
-    String message() default "DateTime must be unique";
+@Constraint(validatedBy = EmailValidator.class)
+public @interface ValidateEmail {
+    String message() default "";
 
     Class<?>[] groups() default {};
 

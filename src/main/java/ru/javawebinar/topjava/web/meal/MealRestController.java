@@ -1,15 +1,22 @@
 package ru.javawebinar.topjava.web.meal;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
+import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
+import ru.javawebinar.topjava.web.validator.CreateAction;
 
-import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.net.URI;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -18,7 +25,11 @@ import java.util.List;
 @RestController
 @RequestMapping(value = MealRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class MealRestController extends AbstractMealController {
+
     static final String REST_URL = "/rest/profile/meals";
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Override
     @GetMapping("/{id}")
@@ -42,12 +53,17 @@ public class MealRestController extends AbstractMealController {
     @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody @Valid Meal meal, @PathVariable int id) {
-        super.update(meal, id);
+    public void update(@RequestBody @Validated({Default.class}) Meal meal, @PathVariable int id) {
+        try {
+            super.update(meal, id);
+        } catch (DataIntegrityViolationException e) {
+            String message = messageSource.getMessage("meal.dateDuplicate", null, LocaleContextHolder.getLocale());
+            throw new IllegalRequestDataException(message);
+        }
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Meal> createWithLocation(@RequestBody @Valid Meal meal) {
+    public ResponseEntity<Meal> createWithLocation(@RequestBody @Validated({Default.class, CreateAction.class}) Meal meal) {
         Meal created = super.create(meal);
 
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()

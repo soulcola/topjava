@@ -1,13 +1,20 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
+import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
+import ru.javawebinar.topjava.web.validator.CreateAction;
 
-import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.net.URI;
 import java.util.List;
 
@@ -16,6 +23,9 @@ import java.util.List;
 public class AdminRestController extends AbstractUserController {
 
     static final String REST_URL = "/rest/admin/users";
+
+    @Autowired
+    private MessageSource messageSource;
 
     @Override
     @GetMapping
@@ -30,7 +40,7 @@ public class AdminRestController extends AbstractUserController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<User> createWithLocation(@RequestBody @Valid User user) {
+    public ResponseEntity<User> createWithLocation(@RequestBody @Validated({Default.class, CreateAction.class}) User user) {
         User created = super.create(user);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL + "/{id}")
@@ -48,8 +58,8 @@ public class AdminRestController extends AbstractUserController {
     @Override
     @PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody @Valid User user, @PathVariable int id) {
-        super.update(user, id);
+    public void update(@RequestBody @Validated(Default.class) User user, @PathVariable int id) {
+            super.update(user, id);
     }
 
     @Override

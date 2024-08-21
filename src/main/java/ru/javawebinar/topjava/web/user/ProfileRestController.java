@@ -1,14 +1,21 @@
 package ru.javawebinar.topjava.web.user;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
+import ru.javawebinar.topjava.util.exception.IllegalRequestDataException;
+import ru.javawebinar.topjava.web.validator.CreateAction;
 
-import javax.validation.Valid;
+import javax.validation.groups.Default;
 import java.net.URI;
 
 import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
@@ -16,7 +23,11 @@ import static ru.javawebinar.topjava.web.SecurityUtil.authUserId;
 @RestController
 @RequestMapping(value = ProfileRestController.REST_URL, produces = MediaType.APPLICATION_JSON_VALUE)
 public class ProfileRestController extends AbstractUserController {
+
     static final String REST_URL = "/rest/profile";
+
+    @Autowired
+    private MessageSource messageSource;
 
     @GetMapping
     public User get() {
@@ -31,7 +42,7 @@ public class ProfileRestController extends AbstractUserController {
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<User> register(@RequestBody @Valid UserTo userTo) {
+    public ResponseEntity<User> register(@RequestBody @Validated({Default.class, CreateAction.class}) UserTo userTo) {
         User created = super.create(userTo);
         URI uriOfNewResource = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path(REST_URL).build().toUri();
@@ -40,8 +51,13 @@ public class ProfileRestController extends AbstractUserController {
 
     @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody @Valid UserTo userTo) {
-        super.update(userTo, authUserId());
+    public void update(@RequestBody @Validated({Default.class}) UserTo userTo) {
+        try {
+            super.update(userTo, authUserId());
+        } catch (DataIntegrityViolationException e) {
+            String message = messageSource.getMessage("user.emailDuplicate", null, LocaleContextHolder.getLocale());
+            throw new IllegalRequestDataException(message);
+        }
     }
 
     @GetMapping("/text")

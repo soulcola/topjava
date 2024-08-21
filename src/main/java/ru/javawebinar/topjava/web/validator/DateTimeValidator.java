@@ -1,4 +1,4 @@
-package ru.javawebinar.topjava.util.exception;
+package ru.javawebinar.topjava.web.validator;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -10,21 +10,28 @@ import ru.javawebinar.topjava.web.SecurityUtil;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
+import java.util.List;
 
 @Component
 public class DateTimeValidator implements ConstraintValidator<ValidDateTime, Meal> {
+
     @Autowired
     private MealRepository mealRepository;
+
     @Autowired
     private MessageSource messageSource;
 
     @Override
-    public boolean isValid(Meal value, ConstraintValidatorContext context) {
+    public boolean isValid(Meal meal, ConstraintValidatorContext context) {
+        if (meal == null || meal.getDateTime() == null || SecurityUtil.safeGet() == null){
+            return true;
+        }
         context.disableDefaultConstraintViolation();
         context.buildConstraintViolationWithTemplate(
                         messageSource.getMessage("meal.dateDuplicate", null, LocaleContextHolder.getLocale()))
                 .addConstraintViolation();
         int userId = SecurityUtil.authUserId();
-        return mealRepository.getBetweenHalfOpen(value.getDateTime(), value.getDateTime().plusMinutes(1), userId).isEmpty();
+        List<Meal> persistedMeal = mealRepository.getBetweenHalfOpen(meal.getDateTime(), meal.getDateTime().plusMinutes(1), userId);
+        return persistedMeal.isEmpty() || persistedMeal.getFirst().getId().equals(meal.getId());
     }
 }
